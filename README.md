@@ -1,1 +1,1 @@
-# programacion_paralela_y_distribuida_2023
+# MergeSort Paralelo 2023
