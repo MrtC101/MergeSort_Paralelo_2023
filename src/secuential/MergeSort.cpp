@@ -5,11 +5,11 @@ using namespace std;
 
 class MergeSort{
 
-    list* mergeSort(list *L){
+    list<int>* mergeSort(list<int> *L){
         list
     }
 
-    static list* sort(list * L){
+    static list<int>* sort(list<int> * L){
         
     }
 }

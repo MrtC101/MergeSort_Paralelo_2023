@@ -6,11 +6,9 @@
 
 class MergeSort
 {
-public:
-    /*Ordena una lista con el algoritmo MergeSort*/
-    static std::list<,>* sort(std::list<,>*);
-private:
-    MergeSort(std::list*);
+    public:
+        /*Ordena una lista con el algoritmo MergeSort*/
+        static std::list<int>* sort(std::list<int>*);
 };
 
 #endif /* MY_CLASS_H */
