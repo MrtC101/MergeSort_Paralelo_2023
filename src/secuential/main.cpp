@@ -7,7 +7,22 @@
 #using namespace
 
 int main(){
-    list<int>* L = FileReader::read();
+    FileReader inputData(filename);
+    std::list<int> L;
+    inputData.getList(&L);
+
+    // print data (test)---------------------------------------- 
+    while (!(myList.empty())) {                                                 
+        for (int elemento : myList) {                                           
+            std::cout << elemento << " ";                                       
+        }                                                                       
+        std::cout << std::endl;                                                 
+        myList.erase(myList.begin(), myList.end());                             
+        reader.getList(myList);                                                 
+    }                                                                           
+    std::cout << std::endl;
+    // end print data---------------------------------------- 
+
     start = time();
     L = MergeSort::sort(L);
     end = time();
