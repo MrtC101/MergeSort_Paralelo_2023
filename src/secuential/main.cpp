@@ -4,7 +4,7 @@
 #include <time.h>
 #include "FileReader.cpp"
 #include "FilePrinter.cpp"
-#using namespace
+#using namespace std;
 
 int main(){
     FileReader inputData(filename);
