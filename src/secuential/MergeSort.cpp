@@ -10,14 +10,14 @@ class MergeSort{
         return L;
     }
     static void print(list<int>* L){
-        std::cout << "[";  
+        cout << "[";  
         for(list<int>::const_iterator it = L->cbegin(); it != L->cend(); it++){
-            std::cout << *it;
+            cout << *it;
             if(&*it != &*L->crbegin()){
-                std::cout << ",";
+                cout << ",";
             }
         }                                                                       
-        std::cout << "]" << std::endl;                                              
+        cout << "]" << endl;                                              
     }
     private:
 
@@ -25,27 +25,30 @@ class MergeSort{
         list<int>::iterator i = left->begin();
         list<int>::iterator j = right->begin();
         while(i != left->end() || j != right->end()){
-            if(i != left->end() && j != right->end()){
-                if(*i<*j){
-                    //L->insert(*i,L->end());
+            if(j != right->end() && i != left->end()){
+                if(*i == *j || *i < *j){
                     L->push_back(*i);
+                    L->pop_front();
                     left->pop_front();
-                    i++;
-                }else{
-                    L->push_back(*j);
-                    right->pop_front();
-                    j++;
+                    i = left->begin();
                 }
-            }else if(i!=left->cend()){
-                L->push_back(*i);
-                left->pop_front();
-                i++;
-            }else {
+                if(*i == *j || *i > *j){
+                    L->push_back(*j);
+                    L->pop_front();
+                    right->pop_front();
+                    j = right->begin();
+                }
+            }else if(j != right->end()){
                 L->push_back(*j);
+                L->pop_front();
                 right->pop_front();
-                j++;
+                j = right->begin();
+            }else if(i != left->end()){
+                L->push_back(*i);
+                L->pop_front();
+                left->pop_front();
+                i = left->begin();
             }
-        
         }
     }
 
@@ -55,7 +58,6 @@ class MergeSort{
         list<int>::iterator middle = next(L->begin(),floor(L->size()/2)); 
         list<int> *left = new list<int>(L->begin(),middle);
         list<int> *right = new list<int>(middle,L->end());
-        print(right);
         mergeSort(left);
         mergeSort(right);
         merge(L,left,right);
