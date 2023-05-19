@@ -1,31 +1,40 @@
-#include <stdio.h>
+#include "../common/FileReader.h"
+#include "../common/FilePrinter.h"
+#include "MergeSort.cpp"
+
+#include <iostream>
 #include <list> 
-#include "mergeSort.h"
-#include <time.h>
-#include "FileReader.cpp"
-#include "FilePrinter.cpp"
-#using namespace std;
+#include <chrono>
 
-int main(){
-    FileReader inputData(filename);
+int main(int argc, char *argv[]){
+
+    std::string path = "../../data/input.data";
+    FileReader input(path);
+    FilePrinter output;
+
     std::list<int> L;
-    inputData.getList(&L);
 
-    // print data (test)---------------------------------------- 
-    while (!(myList.empty())) {                                                 
-        for (int elemento : myList) {                                           
-            std::cout << elemento << " ";                                       
-        }                                                                       
-        std::cout << std::endl;                                                 
-        myList.erase(myList.begin(), myList.end());                             
-        reader.getList(myList);                                                 
+    input.get_list(L);
+
+    while (!(L.empty())) {                                                 
+        auto start = std::chrono::system_clock::now();
+
+        // merge sort ---------------------------------------- 
+        MergeSort::sort(&L);
+        // ---------------------------------------------------  
+        auto end = std::chrono::system_clock::now();
+        std::chrono::duration<float,std::milli> duration = end - start;
+
+        // write in file
+        output.save(L.size(), 1, duration.count());
+
+        L.clear();
+        input.get_list(L);                                                 
     }                                                                           
-    std::cout << std::endl;
-    // end print data---------------------------------------- 
 
-    start = time();
-    L = MergeSort::sort(L);
-    end = time();
-    FilePrinter::save(L)
+    // important! close the file
+    output.end_write();
+
     return 0;
 }
+

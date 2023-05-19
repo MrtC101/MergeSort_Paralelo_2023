@@ -54,3 +54,4 @@ dkms.conf
 # Owner
 *.data
 *.o
+*.x
