@@ -9,6 +9,7 @@ class MergeSort{
         (*obj).mergeSort(L);
         return L;
     }
+
     static void print(list<int>* L){
         cout << "[";  
         for(list<int>::const_iterator it = L->cbegin(); it != L->cend(); it++){
@@ -19,6 +20,7 @@ class MergeSort{
         }                                                                       
         cout << "]" << endl;                                              
     }
+
     private:
 
     void merge(list<int> *L,list<int>* left,list<int>* right){
