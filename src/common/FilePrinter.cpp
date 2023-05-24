@@ -2,12 +2,17 @@
 #include <iostream>
 #include <fstream>
 
-FilePrinter::FilePrinter(): FilePrinter("output.data") {}
-
-FilePrinter::FilePrinter(const std::string filename): filename{filename}{
-     file.open(filename);
+FilePrinter::FilePrinter(): filename("output.data") {
+     file.open(filename.c_str());
      if (!file.is_open()){
-         std::cout << "error open file";
+         std::cout << "error open file" << std::endl;
+     }
+}
+
+FilePrinter::FilePrinter(const std::string& filename): filename(filename){
+     file.open(filename.c_str());
+     if (!file.is_open()){
+         std::cout << "error open file" << std::endl;
      }
  }
 

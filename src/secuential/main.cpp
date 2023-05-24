@@ -4,29 +4,31 @@
 
 #include <iostream>
 #include <list> 
-#include <chrono>
+#include <time.h>
 
 int main(int argc, char *argv[]){
 
     std::string path = "../../data/input.data";
     FileReader input(path);
     FilePrinter output;
+    clock_t start, end;
+    double duration;
 
     std::list<int> L;
 
     input.get_list(L);
 
     while (!(L.empty())) {                                                 
-        auto start = std::chrono::system_clock::now();
+        start = clock();
 
         // merge sort ---------------------------------------- 
         MergeSort::sort(&L);
         // ---------------------------------------------------  
-        auto end = std::chrono::system_clock::now();
-        std::chrono::duration<float,std::milli> duration = end - start;
+        end = clock();
+        duration = (double) (end - start) / CLOCKS_PER_SEC;
 
         // write in file
-        output.save(L.size(), 1, duration.count());
+        output.save(L.size(), 1, duration);
 
         L.clear();
         input.get_list(L);                                                 

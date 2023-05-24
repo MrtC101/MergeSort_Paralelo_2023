@@ -14,7 +14,7 @@ class FileReader{
         char delimiter;
     public:
         FileReader();
-        FileReader(const std::string filename);
+        FileReader(const std::string& filename);
         void to_list(std::list<int> &list);
         void get_list(std::list<int> &list);
 };

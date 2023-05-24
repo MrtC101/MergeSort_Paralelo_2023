@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iterator>
 #include <list>
 #include <math.h>
 using namespace std;
@@ -12,9 +13,9 @@ class MergeSort{
     }
     static void print(list<int>* L){
         cout << "[";  
-        for(list<int>::const_iterator it = L->cbegin(); it != L->cend(); it++){
+        for(list<int>::const_iterator it = L->begin(); it != L->end(); it++){
             cout << *it;
-            if(&*it != &*L->crbegin()){
+            if(&*it != &*L->rbegin()){
                 cout << ",";
             }
         }                                                                       
@@ -56,7 +57,8 @@ class MergeSort{
     
     void mergeSort(list<int> * L){
         if(L->size()>1){
-        list<int>::iterator middle = next(L->begin(),floor(L->size()/2)); 
+        list<int>::iterator middle = L->begin();
+        advance(middle, floor(L->size() / 2));
         list<int> *left = new list<int>(L->begin(),middle);
         list<int> *right = new list<int>(middle,L->end());
         mergeSort(left);
