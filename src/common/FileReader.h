@@ -17,6 +17,8 @@ class FileReader{
         FileReader(const std::string filename);
         void to_list(std::list<int> &list);
         void get_list(std::list<int> &list);
+        void to_vector(std::list<int> &list);
+        void get_vector(std::list<int> &list);
 };
 
 #endif

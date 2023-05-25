@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <list>
+#include <vector>
 
 FileReader::FileReader(): FileReader("input.data"){}
 
@@ -39,3 +40,27 @@ void FileReader::get_list(std::list<int> &list) {
     file.close();
 }
 
+void FileReader::to_vector(std::list<int> &vector)
+{
+    std::string::size_type start = 0;
+    std::string::size_type end = line.find(delimiter);
+
+    while (end != std::string::npos)
+    {
+        vector.push_back(std::stoi(line.substr(start, end - start)));
+        start = end + 1;
+        end = line.find(delimiter, start);
+    }
+
+    vector.push_back(std::stoi(line.substr(start)));
+}
+
+void FileReader::get_vector(std::list<int> &vector)
+{
+    if (std::getline(file, line))
+    {
+        to_vector(vector);
+        return;
+    }
+    file.close();
+}
