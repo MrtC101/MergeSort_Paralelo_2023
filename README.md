@@ -20,3 +20,10 @@ make
 ```
 
 Salida: `secuential.x`
+
+### Ejecución `Parallel`
+
+```sh
+cd src/parallel
+make
+```
