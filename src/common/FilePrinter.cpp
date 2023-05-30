@@ -1,6 +1,7 @@
 #include "FilePrinter.h"
 #include <iostream>
 #include <fstream>
+#include <list>
 
 FilePrinter::FilePrinter(): FilePrinter("output.data") {}
 
@@ -16,6 +17,13 @@ FilePrinter::FilePrinter(const std::string filename): filename{filename}{
           << size_nodes << "," 
           << time << "\n";
  }
+
+void FilePrinter::save_list(std::list<int> &L) {
+    for (const auto& element : L) {
+        file << element << " ";
+    }
+    file << "\n";
+}
 
  void FilePrinter::end_write(){
      file.close();

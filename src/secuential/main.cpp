@@ -11,6 +11,7 @@ int main(int argc, char *argv[]){
     std::string path = "../../data/input.data";
     FileReader input(path);
     FilePrinter output;
+    FilePrinter ordered("ordered.data");
 
     std::list<int> L;
 
@@ -25,8 +26,11 @@ int main(int argc, char *argv[]){
         auto end = std::chrono::system_clock::now();
         std::chrono::duration<float,std::milli> duration = end - start;
 
-        // write in file
+        // write metrics in file
         output.save(L.size(), 1, duration.count());
+
+        // write ordered list
+        ordered.save_list(L);
 
         L.clear();
         input.get_list(L);                                                 
@@ -34,6 +38,7 @@ int main(int argc, char *argv[]){
 
     // important! close the file
     output.end_write();
+    ordered.end_write();
 
     return 0;
 }
