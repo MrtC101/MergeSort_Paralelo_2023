@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include <list>
+#include <vector>
 
 class FileReader{
     private:
@@ -17,8 +18,8 @@ class FileReader{
         FileReader(const std::string filename);
         void to_list(std::list<int> &list);
         void get_list(std::list<int> &list);
-        void to_vector(std::list<int> &list);
-        void get_vector(std::list<int> &list);
+        void to_vector(std::vector<int> &list);
+        void get_vector(std::vector<int> &list);
 };
 
 #endif

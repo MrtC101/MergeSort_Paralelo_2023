@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
     FilePrinter output;
 
     std::vector<int> L;
-
+    input.get_vector(L);
     vector<int> sortedVector = MergeSort::sort(argc, argv, L);
 
     if (sortedVector.empty())

@@ -40,7 +40,7 @@ void FileReader::get_list(std::list<int> &list) {
     file.close();
 }
 
-void FileReader::to_vector(std::list<int> &vector)
+void FileReader::to_vector(std::vector<int> &vector)
 {
     std::string::size_type start = 0;
     std::string::size_type end = line.find(delimiter);
@@ -55,7 +55,7 @@ void FileReader::to_vector(std::list<int> &vector)
     vector.push_back(std::stoi(line.substr(start)));
 }
 
-void FileReader::get_vector(std::list<int> &vector)
+void FileReader::get_vector(std::vector<int> &vector)
 {
     if (std::getline(file, line))
     {
