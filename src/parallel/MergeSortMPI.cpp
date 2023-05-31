@@ -102,20 +102,14 @@ public:
 
 int main(int argc, char *argv[])
 {
-    std::string path = "../../data/input.data";
-    FileReader input(path);
+    // std::string path = "../../data/input.data";
+    // FileReader input(path);
     FilePrinter output;
 
     std::vector<int> L;
-    input.get_vector(L);
+    // input.get_vector(L);
     vector<int> sortedVector = MergeSort::sort(argc, argv, L);
-
-    if (sortedVector.empty())
-    {
-        cout << "No se encontró un vector ordenado" << endl;
-    }
-    else
-    {
+    if (sortedVector.size()!=0) {
         cout << "Vector ordenado: [";
         for (unsigned int i = 0; i < sortedVector.size(); ++i)
         {
@@ -123,6 +117,8 @@ int main(int argc, char *argv[])
         }
         cout << "]" << endl;
     }
+    
+    
 
     return 0;
 }
