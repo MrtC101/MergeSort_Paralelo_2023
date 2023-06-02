@@ -18,7 +18,10 @@ FileReader::FileReader(const std::string filename): filename{filename},
 }
 
 void FileReader::setPath(const std::string filename) {
-
+    if (file.is_open())
+    {
+        file.close();
+    }
     this->filename = filename;
     this->delimiter = ' ';
     file.open(filename);
