@@ -17,6 +17,17 @@ FileReader::FileReader(const std::string filename): filename{filename},
     }
 }
 
+void FileReader::setPath(const std::string filename) {
+
+    this->filename = filename;
+    this->delimiter = ' ';
+    file.open(filename);
+    if (!file.is_open())
+    {
+        std::cout << "Failed to open the file." << std::endl;
+    }
+}
+
 // move to private and test
 void FileReader::to_list(std::list<int> &list) {
     std::string::size_type start = 0;

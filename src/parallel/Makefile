@@ -1,10 +1,10 @@
-secuential.x: ../common/FileReader.o ../common/FilePrinter.o MergeSortMPI.o
+secuential.x: ../common/FileReader.o ../common/FilePrinter.o MergeSort_MPI.o
 	@echo Generating executable merge sort with mpi
-	mpic++ ../common/FileReader.o ../common/FilePrinter.o MergeSortMPI.o -o mergempi.x
+	mpic++ ../common/FileReader.o ../common/FilePrinter.o MergeSort_MPI.o -o mergempi.x
 
-MergeSortMPI.o: ../common/FileReader.h ../common/FilePrinter.h MergeSortMPI.cpp
-	@echo MergeSortMPI.o
-	mpic++ -c MergeSortMPI.cpp
+MergeSort_MPI.o: ../common/FileReader.h ../common/FilePrinter.h MergeSort_MPI.cpp
+	@echo MergeSort_MPI.o
+	mpic++ -c MergeSort_MPI.cpp
 
 FilePrinter.o: ../FilePrinter.cpp
 	@echo ../common/FilePrinter.o
