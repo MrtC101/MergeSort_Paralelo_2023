@@ -7,13 +7,11 @@
 #include <iostream>
 #include <chrono>
 
-using namespace std;
-
-vector<int> mergeSort(vector<int> *subL, int rank, int size) {
+void mergeSort(std::vector<int> subL, int rank, int size) {
     // Cada proceso ordena su parte.
-    std::sort(subL->begin(), subL->end());
-
-    vector<int> *sorted;
+    std::sort(subL.begin(), subL.end());
+/*
+    std::vector<int> sorted;
     MPI_Status status;
     int step = 1;
 
@@ -25,40 +23,36 @@ vector<int> mergeSort(vector<int> *subL, int rank, int size) {
         {                           // El izquierdo recibe el vector y mezcla
             if (rank + step < size) // Los procesos sin pareja esperan.
             {
-                vector<int> localNeighb(subL->size());
-                sorted = new vector<int>(subL->size() * 2);
+                std::vector<int> localNeighb(subL.size());
+                std::vector<int> sorted(subL.size() * 2);
 
                 MPI_Recv(&localNeighb[0], localNeighb.size(), MPI_INT, rank + step, 0, MPI_COMM_WORLD, &status);
                 std::merge(
-                    subL->begin(), subL->end(),
+                    subL.begin(), subL.end(),
                     localNeighb.begin(), localNeighb.end(),
-                    sorted->begin());
+                    sorted.begin());
 
-                delete subL;
                 subL = sorted;
-                sorted = NULL;
+                sorted.clear();
             }
         }
         else
         {
             // El derecho envia su vector ordenado y termina
             int nbr = rank - step;
-            MPI_Send(&((*subL)[0]), subL->size(), MPI_INT, nbr, 0, MPI_COMM_WORLD);
+            MPI_Send(&subL[0], subL.size(), MPI_INT, nbr, 0, MPI_COMM_WORLD);
             break; // Sale del bucle
         }
         step = step * 2; // El paso se duplica ya que el numero de procesos se reduce a la mitad.
-    }
-    vector<int> result;
-    result = *subL;
-    return result;
-        
+    }*/
 }
 
 int main(int argc, char *argv[])
 {
     int rank, size;
-    vector<int> Global; // Vector a ordenar
-    vector<int> *Local; // parte del vector
+    int chunk_size;
+    bool end_file;
+    std::vector<int> global; // Vector a ordenar
 
     MPI_Init(&argc, &argv);               // iniciamos el entorno MPI
     MPI_Comm_rank(MPI_COMM_WORLD, &rank); // obtenemos el identificador del proceso
@@ -66,43 +60,62 @@ int main(int argc, char *argv[])
 
     if (size % 2 != 0)
     { // El numero de procesos deberia debe ser par para aplicar este algoritmo
-                cout
-            << "El numero de procesos debe ser par" << endl;
-        MPI_Abort(MPI_COMM_WORLD, 1); // abandonamos la ejecucion.
+        std::cout << "El numero de procesos debe ser par" << std::endl;
+        MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE); // abandonamos la ejecucion.
     }
-    FileReader input;
-    FilePrinter output;
-    if (rank == 0)
-    { // el proceso 0 genera un vector desordenado.
+
+    if (rank == 0) {
         std::string path = "../../data/input.data";
-        
-        input.setPath(path);
-        input.get_vector(Global);
-    }
-    vector<int> *subL; // Parte del vector
-    int n;
-    while (!(Global.empty()))
-    {
-        n = Global.size();
-        subL = new vector<int>(n / size);
-        MPI_Scatter(&Global[0], Global.size() / size, MPI_INT, &subL[0], Global.size() / size, MPI_INT, 0, MPI_COMM_WORLD);
-        if (rank==0) {
+        FileReader input(path);
+        FilePrinter output;
+        FilePrinter ordered("ordered.data");
+
+        input.get_vector(global);
+        end_file = global.empty();
+        MPI_Bcast(&end_file, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+        while (!end_file)
+        {
+            chunk_size = global.size() / size;
+            MPI_Bcast(&chunk_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            std::vector<int> subL(chunk_size);
+
+            //subL = new vector<int>(chunk_size);
+            MPI_Scatter(&global[0], chunk_size, MPI_INT, &subL[0], chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
+
             auto start = std::chrono::system_clock::now();
-            vector<int> sortedVector = mergeSort(subL, rank, size);
+            mergeSort(subL, rank, size);
+            std::vector<int> sortedVector(subL);
             auto end = std::chrono::system_clock::now();
             std::chrono::duration<float, std::milli> duration = end - start;
 
+            MPI_Gather(&sortedVector[0], chunk_size, MPI_INT, &global[0], chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
+
             // write in file
             output.save(sortedVector.size(), 1, duration.count());
-            Global.clear();
-            input.get_vector(Global);
-        }
-        else {
-            mergeSort(subL, rank, size);
-        }
-             
-    }
-    output.end_write();
+            ordered.save_list(sortedVector);
+            global.clear();
+            input.get_vector(global);
 
+            end_file = global.empty();
+            MPI_Bcast(&end_file, 1, MPI_INT, 0, MPI_COMM_WORLD);
+        }
+        output.end_write();
+
+    }
+    else {
+        MPI_Bcast(&end_file, 1, MPI_INT, 0, MPI_COMM_WORLD);
+        std::cout << "on while" << std::endl;
+        while (!end_file)
+        {
+            MPI_Bcast(&chunk_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            std::vector<int> subL(chunk_size);
+
+            MPI_Scatter(&global[0], chunk_size, MPI_INT, &subL[0], chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
+            mergeSort(subL, rank, size);
+            MPI_Gather(&subL[0], chunk_size, MPI_INT, NULL, chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
+            MPI_Bcast(&end_file, 1, MPI_INT, 0, MPI_COMM_WORLD);
+        }
+    }
     MPI_Finalize();
 }
