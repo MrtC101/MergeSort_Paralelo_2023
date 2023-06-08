@@ -23,6 +23,30 @@ def write_to_file(nf: str, lists: list) -> None:
                 file.write(' '.join(str(__) for __ in _))
                 file.write('\n')
 
+def write_random_to_file(nf: str, size: int, length: int, max_n: int) -> None:
+    """
+    size: cantidad de listas
+    length: cantidad de elementos de cada lista
+    max_n: número máximo
+    """
+
+    if nf:
+        with open(nf, 'a', encoding='utf-8') as file:
+            for _ in range(size):
+                for __ in range(length-1):
+                    file.write(str(random.randint(0, max_n)))
+                    file.write(' ')
+                file.write(str(random.randint(0, max_n)))
+                file.write('\n')
+    else:
+        with open('input.data', 'w', encoding='utf-8') as file:
+            for _ in range(size):
+                for __ in range(length-1):
+                    file.write(str(random.randint(0, max_n)))
+                    file.write(' ')
+                file.write(str(random.randint(0, max_n)))
+                file.write('\n')
+
 if __name__ == '__main__':
     # Create an ArgumentParser object
     parser = argparse.ArgumentParser(description="""
@@ -44,6 +68,7 @@ if __name__ == '__main__':
     max_n: int = args.max_number
     name_file: str = args.input_file
 
-    lists: list[list] = generator(cant, length, max_n)
-    write_to_file(name_file, lists)
+    #lists: list[list] = generator(cant, length, max_n)
+    #write_to_file(name_file, lists)
+    write_random_to_file(name_file, cant, length, max_n)
 

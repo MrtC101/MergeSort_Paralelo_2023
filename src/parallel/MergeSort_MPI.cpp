@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
     int rank, size;
     int chunk_size;
     int end_file;
+    double time_taken;
     //bool end_file;
     std::vector<int> global; // Vector a ordenar
 
@@ -80,10 +81,8 @@ int main(int argc, char *argv[])
         MPI_Bcast(&end_file, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
         while (!end_file) {
+            auto start = std::chrono::high_resolution_clock::now();
             chunk_size = global.size() / size;
-            //for (int i = 1; i < size; ++i) {
-            //    MPI_Send(&chunk_size, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
-            //}
 
             // tamaño del buffer
             MPI_Bcast(&chunk_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -92,24 +91,18 @@ int main(int argc, char *argv[])
             //subL = new vector<int>(chunk_size);
             MPI_Scatter(&global[0], chunk_size, MPI_INT, &subL[0], chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
 
-            auto start = std::chrono::system_clock::now();
-            std::vector<int> sortedVector(subL);
             mergeSort(subL, rank, size);
-            auto end = std::chrono::system_clock::now();
-            std::chrono::duration<float, std::milli> duration = end - start;
+            auto end = std::chrono::high_resolution_clock::now();
+            time_taken = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 
             // write metrics in file
-            output.save(sortedVector.size(), 1, duration.count());
+            output.save(subL.size(), size, time_taken*1e-9);
             // write ordered list
             ordered.save_list(subL);
             global.clear();
             input.get_vector(global);
 
             end_file = global.empty();
-
-            //for (int i = 1; i < size; ++i) {
-            //    MPI_Send(&end_file, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
-            //}
             
             // sincroniza otros procesos y avisa si todavía quedan listas a 
             // ordenar
@@ -118,18 +111,14 @@ int main(int argc, char *argv[])
         output.end_write();
     }
     else {
-        //MPI_Recv(&end_file, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         MPI_Bcast(&end_file, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
         while (!end_file) {
-            //MPI_Recv(&chunk_size, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             MPI_Bcast(&chunk_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
             std::vector<int> subL(chunk_size);
 
             MPI_Scatter(&global[0], chunk_size, MPI_INT, &subL[0], chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
             mergeSort(subL, rank, size);
 
-            //MPI_Recv(&end_file, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             MPI_Bcast(&end_file, 1, MPI_INT, 0, MPI_COMM_WORLD);
         }
     }
