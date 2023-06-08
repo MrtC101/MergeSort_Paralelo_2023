@@ -12,7 +12,7 @@ Más info: `python generator.py --help`
 
 ### Ejecución `Secuential`
 
-Datos de entrada hardcodeados (deben estar en /data)
+Datos de entrada, nombre del archivo hardcodeado (debe estar en /data)
 
 ```sh
 cd src/secuential
@@ -26,4 +26,12 @@ Salida: `secuential.x`
 ```sh
 cd src/parallel
 make
+```
+
+Salida: `mergempi.x`
+
+Ejecución:
+
+```sh
+mpirun -np [numero_de_procesos] ./mergempi.x
 ```
