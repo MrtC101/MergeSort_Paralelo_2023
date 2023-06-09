@@ -1,8 +1,10 @@
 #include "../common/FileReader.h"
 #include "../common/FilePrinter.h"
+#include "MergeSort.cpp"
 
 #include <algorithm>
 #include <vector>
+#include <list>
 
 #include <mpi.h>
 
@@ -11,7 +13,9 @@
 
 void mergeSort(std::vector<int> &subL, int rank, int size) {
     // Cada proceso ordena su parte.
-    std::sort(subL.begin(), subL.end());
+    std::list<int> subL_list(subL.begin(), subL.end());
+    MergeSort::sort(&subL_list);
+    subL.assign(subL_list.begin(), subL_list.end());
 
     std::vector<int> sorted;
     MPI_Status status;
